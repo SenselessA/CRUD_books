@@ -31,7 +31,5 @@ func NewPostgresDB(cfg Config) (*sqlx.DB, error) {
 		return nil, err
 	}
 
-	fmt.Println("DB CONNECTED")
-
 	return db, nil
 }

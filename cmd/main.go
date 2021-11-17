@@ -1,7 +1,10 @@
 package main
 
 import (
+	"context"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/SenselessA/CRUD_books"
 	"github.com/SenselessA/CRUD_books/pkg/handler"
@@ -12,6 +15,13 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
+
+// @title CRUD_books API
+// @version 1.0
+// @description API Server for CRUD Books Application
+
+// @host localhost:8080
+// @BasePath /books
 
 func main() {
 	logrus.SetFormatter(new(logrus.JSONFormatter))
@@ -41,8 +51,23 @@ func main() {
 	handlers := handler.NewHandler(services)
 
 	srv := new(CRUD_books.Server)
-	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
-		logrus.Fatalf("error occurred while running http server: %s", err)
+
+	go func () {
+		if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
+			logrus.Fatalf("error occurred while running http server: %s", err)
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
+	<- quit
+
+	if err := srv.Shutdown(context.Background()); err != nil {
+		logrus.Errorf("error shutting down http server: %s", err)
+	}
+
+	if err := db.Close(); err != nil {
+		logrus.Errorf("error closing db: %s", err)
 	}
 }
 

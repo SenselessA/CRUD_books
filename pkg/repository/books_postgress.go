@@ -6,6 +6,7 @@ import (
 
 	"github.com/SenselessA/CRUD_books"
 	"github.com/jmoiron/sqlx"
+	"github.com/sirupsen/logrus"
 )
 
 type Book struct {
@@ -65,6 +66,7 @@ func (r *BooksRepository) UpdateBook(book CRUD_books.Book) (Book, error) {
 
 	err := r.db.Get(&result, query, book.Title, book.Isbm)
 	if err != nil {
+		logrus.Println(err)
 		return result, err
 	}
 
