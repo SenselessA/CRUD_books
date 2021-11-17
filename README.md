@@ -3,6 +3,7 @@
 ## Запуск
 Конфиг с настройками порта и БД в ```configs\config.yaml```
 Пароль для бд хранится отдельно от репозитория на локальной машине, запись вида ``` DB_PASSWORD=your_password ``` в корневой папке проекта в файле ```.env```
+Swagger doc ```http://localhost:8000/swagger/index.html```
 
 ###### SQL Скрипт для создания таблицы book в postgreSQL: 
 ```
@@ -42,9 +43,9 @@
   ]
 ```
 
-##### http://localhost:8000/books/?id=1
-* GET - Получить книгу по id
-Запрос: -  
+##### http://localhost:8000/book/1
+* GET - Получить книгу по id 1
+Запрос path: http://localhost:8000/book/:id  
 Ответ JSON вида:
 ```
   {
@@ -54,7 +55,7 @@
   }
 ```
 
-##### http://localhost:8000/books/
+##### http://localhost:8000/book
 * POST - Добавить новую книгу  
 Запрос JSON вида: 
 ```
@@ -70,7 +71,7 @@
   }
 ```
 
-##### http://localhost:8000/books/
+##### http://localhost:8000/book
 * PUT - Обновить данные по книге  
 Запрос JSON вида: 
 ```
@@ -89,7 +90,7 @@
   }
 ```
 
-##### http://localhost:8000/books/
+##### http://localhost:8000/book
 * DELETE - Удалить книгу  
 Запрос JSON вида: 
 ```
