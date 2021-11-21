@@ -29,6 +29,6 @@ func (b *BookService) UpdateBook(book CRUD_books.Book) (repository.Book, error) 
 	return b.repo.UpdateBook(book)
 }
 
-func (b *BookService) DeleteBook(id int) (repository.Book, error) {
+func (b *BookService) DeleteBook(id string) (repository.Book, error) {
 	return b.repo.DeleteBook(id)
 }

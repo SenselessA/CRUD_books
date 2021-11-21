@@ -9,3 +9,8 @@ type Book struct {
 type BookId struct {
 	Id    int    `json:"id"`
 }
+
+type UpdateBook struct {
+	Title string `json:"title"`
+	Isbm  string `json:"isbm"`
+}

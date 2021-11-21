@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/SenselessA/CRUD_books"
 	"github.com/gin-gonic/gin"
@@ -18,7 +19,7 @@ import (
 func (h *Handler) GetAllBooks(c *gin.Context) {
 	books, err := h.services.GetAllBooks()
 	if err != nil {
-		c.Writer.WriteHeader(http.StatusInternalServerError)
+		c.Status(http.StatusInternalServerError)
 		return
 	}
 
@@ -39,7 +40,7 @@ func (h *Handler) GetBook(c *gin.Context) {
 
 	book, err := h.services.GetBook(id)
 	if err != nil {
-		c.Writer.WriteHeader(http.StatusInternalServerError)
+		c.Status(http.StatusInternalServerError)
 		return
 	}
 
@@ -59,13 +60,13 @@ func (h *Handler) CreateBook(c *gin.Context) {
 	var book CRUD_books.Book
 
 	if err := c.BindJSON(&book); err != nil {
-		c.Writer.WriteHeader(http.StatusBadRequest)
+		c.Status(http.StatusBadRequest)
 		return
 	}
 
 	id, err := h.services.AddBook(book)
 	if err != nil {
-		c.Writer.WriteHeader(http.StatusInternalServerError)
+		c.Status(http.StatusInternalServerError)
 		return
 	}
 
@@ -74,24 +75,43 @@ func (h *Handler) CreateBook(c *gin.Context) {
 
 // @Summary Update Book
 // @Tags book
-// @Description create book
+// @Description update book
 // @ID update-book
 // @Accept json
 // @Produce json
-// @Param input body CRUD_books.Book true "book info"
+// @Param id path string true "course id"
+// @Param input body CRUD_books.UpdateBook true "book info"
 // @Success 200 {object} repository.Book
-// @Router /book [put]
+// @Router /book/{id} [put]
 func (h *Handler) UpdateBook(c *gin.Context) {
-	var book CRUD_books.Book
+	idParam := c.Param("id")
 
-	if err := c.BindJSON(&book); err != nil {
-		c.Writer.WriteHeader(http.StatusBadRequest)
+	if idParam == "" {
+		c.Status(http.StatusBadRequest)
+
 		return
 	}
 
-	updatedBook, err := h.services.UpdateBook(book)
+	stringId, err := strconv.Atoi(idParam)
 	if err != nil {
-		c.Writer.WriteHeader(http.StatusInternalServerError)
+		c.Status(http.StatusBadRequest)
+		return
+	}
+
+	var bookNewInfo CRUD_books.UpdateBook
+
+	if err := c.BindJSON(&bookNewInfo); err != nil {
+		c.Status(http.StatusBadRequest)
+		return
+	}
+
+	updatedBook, err := h.services.UpdateBook(CRUD_books.Book{
+		Id:    stringId,
+		Title: bookNewInfo.Title,
+		Isbm:  bookNewInfo.Isbm,
+	})
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
 		return
 	}
 
@@ -104,20 +124,15 @@ func (h *Handler) UpdateBook(c *gin.Context) {
 // @ID delete-book
 // @Accept  json
 // @Produce  json
-// @Param input body CRUD_books.BookId true "book id"
+// @Param id path int true "Book ID"
 // @Success 200 {object} repository.Book
-// @Router /book [delete]
+// @Router /book/{id} [delete]
 func (h *Handler) DeleteBook(c *gin.Context) {
-	var bookId CRUD_books.BookId
+	id := c.Param("id")
 
-	if err := c.BindJSON(&bookId); err != nil {
-		c.Writer.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	deletedBook, err := h.services.DeleteBook(bookId.Id)
+	deletedBook, err := h.services.DeleteBook(id)
 	if err != nil {
-		c.Writer.WriteHeader(http.StatusInternalServerError)
+		c.Status(http.StatusInternalServerError)
 		return
 	}
 

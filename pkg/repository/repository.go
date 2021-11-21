@@ -12,7 +12,7 @@ type Books interface {
 	GetBook(id string) (Book, error)
 	AddBook(newBook CRUD_books.Book) (int, error)
 	UpdateBook(book CRUD_books.Book) (Book, error)
-	DeleteBook(id int) (Book, error)
+	DeleteBook(id string) (Book, error)
 }
 
 type Repository struct {
