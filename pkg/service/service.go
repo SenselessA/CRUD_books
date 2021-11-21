@@ -10,7 +10,7 @@ type Book interface {
 	GetBook(id string) (repository.Book, error)
 	AddBook(newBook CRUD_books.Book) (int, error)
 	UpdateBook(book CRUD_books.Book) (repository.Book, error)
-	DeleteBook(id int) (repository.Book, error)
+	DeleteBook(id string) (repository.Book, error)
 }
 
 type Service struct {

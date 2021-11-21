@@ -1,0 +1,141 @@
+basePath: /books
+definitions:
+  CRUD_books.Book:
+    properties:
+      id:
+        type: integer
+      isbm:
+        type: string
+      title:
+        type: string
+    type: object
+  CRUD_books.BookId:
+    properties:
+      id:
+        type: integer
+    type: object
+  repository.Book:
+    properties:
+      id:
+        type: integer
+      isbm:
+        type: string
+      title:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API Server for CRUD Books Application
+  title: CRUD_books API
+  version: "1.0"
+paths:
+  /book:
+    delete:
+      consumes:
+      - application/json
+      description: delete book
+      operationId: delete-book
+      parameters:
+      - description: book id
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/CRUD_books.BookId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repository.Book'
+      summary: Delete Book
+      tags:
+      - book
+    get:
+      consumes:
+      - application/json
+      description: get book by ID
+      operationId: get-book
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repository.Book'
+            type: array
+      summary: Get Book
+      tags:
+      - book
+    post:
+      consumes:
+      - application/json
+      description: create book
+      operationId: create-book
+      parameters:
+      - description: book info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/CRUD_books.Book'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/CRUD_books.BookId'
+      summary: Create Book
+      tags:
+      - book
+    put:
+      consumes:
+      - application/json
+      description: create book
+      operationId: update-book
+      parameters:
+      - description: book info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/CRUD_books.Book'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repository.Book'
+      summary: Update Book
+      tags:
+      - book
+  /books:
+    get:
+      consumes:
+      - application/json
+      description: get all books
+      operationId: get-all-books
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repository.Book'
+            type: array
+      summary: All Books
+      tags:
+      - books
+swagger: "2.0"

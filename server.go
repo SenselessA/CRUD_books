@@ -10,10 +10,10 @@ type Server struct {
 	httpServer *http.Server
 }
 
-func (s *Server) Run(port string, mux *http.ServeMux) error {
+func (s *Server) Run(port string, handler http.Handler) error {
 	s.httpServer = &http.Server{
 		Addr:           ":" + port,
-		Handler:        mux,
+		Handler:        handler,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20, // 1MB = 1024KB

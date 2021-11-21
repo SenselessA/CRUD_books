@@ -6,6 +6,7 @@ import (
 
 	"github.com/SenselessA/CRUD_books"
 	"github.com/jmoiron/sqlx"
+	"github.com/sirupsen/logrus"
 )
 
 type Book struct {
@@ -65,16 +66,17 @@ func (r *BooksRepository) UpdateBook(book CRUD_books.Book) (Book, error) {
 
 	err := r.db.Get(&result, query, book.Title, book.Isbm)
 	if err != nil {
+		logrus.Println(err)
 		return result, err
 	}
 
 	return result, nil
 }
 
-func (r *BooksRepository) DeleteBook(id int) (Book, error) {
+func (r *BooksRepository) DeleteBook(id string) (Book, error) {
 	var result Book
 
-	query := fmt.Sprintf("DELETE FROM %s WHERE book_id = %d RETURNING *", bookTable, id)
+	query := fmt.Sprintf("DELETE FROM %s WHERE book_id = %s RETURNING *", bookTable, id)
 
 	err := r.db.Get(&result, query)
 	// if all ok, err = sql: no rows in result set ?????????

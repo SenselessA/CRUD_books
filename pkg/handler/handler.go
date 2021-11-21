@@ -1,9 +1,13 @@
 package handler
 
 import (
-	"net/http"
-
 	"github.com/SenselessA/CRUD_books/pkg/service"
+	"github.com/gin-gonic/gin"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
+	_ "github.com/SenselessA/CRUD_books/docs"
 )
 
 type Handler struct {
@@ -14,30 +18,23 @@ func NewHandler(services *service.Service) *Handler {
 	return &Handler{services: services}
 }
 
-func (h *Handler) InitRoutes() *http.ServeMux {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/books", h.books)
-	mux.HandleFunc("/books/", h.book)
-	return mux
-}
+func (h *Handler) InitRoutes() *gin.Engine {
+	router := gin.New()
 
-// books
-func (h *Handler) books(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
-		h.GetAllBooks(w, r)
-	}
-}
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-// book/id
-func (h *Handler) book(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		h.GetBook(w, r)
-	case "POST":
-		h.CreateBook(w, r)
-	case "PUT":
-		h.UpdateBook(w, r)
-	case "DELETE":
-		h.DeleteBook(w, r)
+	books := router.Group("books", h.GetAllBooks)
+	{
+		books.GET("")
 	}
+
+	book := router.Group("book")
+	{
+		book.GET("/:id", h.GetBook)
+		book.POST("/", h.CreateBook)
+		book.PUT("/:id", h.UpdateBook)
+		book.DELETE("/:id", h.DeleteBook)
+	}
+
+	return router
 }
