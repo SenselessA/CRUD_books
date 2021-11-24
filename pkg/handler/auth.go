@@ -17,7 +17,7 @@ func (h *Handler) SignUp(c *gin.Context) {
 		return
 	}
 
-	if err := h.User.SignUp(c, inp); err != nil {
+	if err := h.usersService.SignUp(c, inp); err != nil {
 		c.Status(http.StatusInternalServerError)
 		return
 	}
@@ -33,7 +33,7 @@ func (h *Handler) SignIn(c *gin.Context) {
 		return
 	}
 
-	token, err := h.User.SignIn(c, inp)
+	token, err := h.usersService.SignIn(c, inp)
 	if err != nil {
 		if errors.Is(err, CRUD_books.ErrUserNotFound) {
 			handleNotFoundError(c, err)
