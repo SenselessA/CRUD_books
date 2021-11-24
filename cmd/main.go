@@ -8,6 +8,7 @@ import (
 
 	"github.com/SenselessA/CRUD_books"
 	"github.com/SenselessA/CRUD_books/pkg/handler"
+	"github.com/SenselessA/CRUD_books/pkg/hash"
 	"github.com/SenselessA/CRUD_books/pkg/repository"
 	"github.com/SenselessA/CRUD_books/pkg/service"
 	"github.com/joho/godotenv"
@@ -46,13 +47,19 @@ func main() {
 		logrus.Fatalf("failed to initialize db: %s", err.Error())
 	}
 
-	repos := repository.NewRepository(db)
-	services := service.NewService(repos)
-	handlers := handler.NewHandler(services)
+	hasher := hash.NewSHA1Hasher("salt")
+
+	bookRepository := repository.NewBooks(db)
+	bookService := service.NewBooks(bookRepository)
+
+	userRepository := repository.NewUsers(db)
+	userService := service.NewUsers(userRepository, hasher, []byte("secret need out in config"), viper.GetViper().GetDuration("TokenTTL"))
+
+	handlers := handler.NewHandler(bookService, userService)
 
 	srv := new(CRUD_books.Server)
 
-	go func () {
+	go func() {
 		if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
 			logrus.Fatalf("error occurred while running http server: %s", err)
 		}
@@ -60,7 +67,7 @@ func main() {
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
-	<- quit
+	<-quit
 
 	if err := srv.Shutdown(context.Background()); err != nil {
 		logrus.Errorf("error shutting down http server: %s", err)
