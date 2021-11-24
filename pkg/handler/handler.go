@@ -11,17 +11,27 @@ import (
 )
 
 type Handler struct {
-	services *service.Service
+	Book *service.BooksService
+	User *service.UsersService
 }
 
-func NewHandler(services *service.Service) *Handler {
-	return &Handler{services: services}
+func NewHandler(BooksService *service.BooksService, UsersService *service.UsersService) *Handler {
+	return &Handler{
+		Book: BooksService,
+		User: UsersService,
+	}
 }
 
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	auth := router.Group("auth")
+	{
+		auth.POST("/sign-up", h.SignUp)
+		auth.GET("/sign-in", h.SignIn)
+	}
 
 	books := router.Group("books", h.GetAllBooks)
 	{

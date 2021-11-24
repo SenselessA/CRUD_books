@@ -6,3 +6,6 @@ db:
   username: "postgres"
   dbName:   "booksDB"
   sslMode:  "disable"
+
+Auth:
+  TokentTTL:  time.Duration `mapstructure:"token_ttl"`

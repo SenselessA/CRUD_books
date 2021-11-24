@@ -15,12 +15,12 @@ type Books interface {
 	DeleteBook(id string) (Book, error)
 }
 
-type Repository struct {
+type BooksRepo struct {
 	Books
 }
 
-func NewRepository(db *sqlx.DB) *Repository {
-	return &Repository{
+func NewBooks(db *sqlx.DB) *BooksRepo {
+	return &BooksRepo{
 		Books: NewBooksPostgres(db),
 	}
 }

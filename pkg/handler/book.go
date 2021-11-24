@@ -17,7 +17,7 @@ import (
 // @Success 200 {object} []repository.Book
 // @Router /books [get]
 func (h *Handler) GetAllBooks(c *gin.Context) {
-	books, err := h.services.GetAllBooks()
+	books, err := h.Book.GetAllBooks()
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
 		return
@@ -38,7 +38,7 @@ func (h *Handler) GetAllBooks(c *gin.Context) {
 func (h *Handler) GetBook(c *gin.Context) {
 	id := c.Param("id")
 
-	book, err := h.services.GetBook(id)
+	book, err := h.Book.GetBook(id)
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
 		return
@@ -64,7 +64,7 @@ func (h *Handler) CreateBook(c *gin.Context) {
 		return
 	}
 
-	id, err := h.services.AddBook(book)
+	id, err := h.Book.AddBook(book)
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
 		return
@@ -105,7 +105,7 @@ func (h *Handler) UpdateBook(c *gin.Context) {
 		return
 	}
 
-	updatedBook, err := h.services.UpdateBook(CRUD_books.Book{
+	updatedBook, err := h.Book.UpdateBook(CRUD_books.Book{
 		Id:    stringId,
 		Title: bookNewInfo.Title,
 		Isbm:  bookNewInfo.Isbm,
@@ -130,7 +130,7 @@ func (h *Handler) UpdateBook(c *gin.Context) {
 func (h *Handler) DeleteBook(c *gin.Context) {
 	id := c.Param("id")
 
-	deletedBook, err := h.services.DeleteBook(id)
+	deletedBook, err := h.Book.DeleteBook(id)
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
 		return
